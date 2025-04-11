@@ -77,9 +77,10 @@ DOSAGE_FACTORS = {
 
 # Medications that use loading doses for first administration
 # BUG: Missing commas between list items
+# FIX: Adding commas
 LOADING_DOSE_MEDICATIONS = [
-    "amiodarone"
-    "lorazepam"
+    "amiodarone",
+    "lorazepam",
     "fentynal"
 ]
 
@@ -94,8 +95,12 @@ def load_patient_data(filepath):
         list: List of patient dictionaries
     """
     # BUG: No error handling for file not found
-    with open(filepath, 'r') as file:
-        return json.load(file)
+    try:
+        with open(filepath, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("File not found!")
+        sys.exit(1)
 
 def calculate_dosage(patient):
     """
@@ -112,13 +117,24 @@ def calculate_dosage(patient):
     
     # Extract patient information
     # BUG: No check if 'weight' key exists
-    weight = patient['weight']
+    # FIX: Check before extracting, return empty list if not exist
+    if "weight" in patient:
+        weight = patient['weight']
+    else:
+        weight = []
+        print("weight doesn't exist!")
     # BUG: No check if 'medication' key exists
-    medication = patient['medication'] # This bug is diabolical
+    # FIX: Check before extracting, return empty list if not exist
+    if "medication" in patient:
+        medication = patient['medication'] # This bug is diabolical
+    else:
+        medication = []
+        print("medication doesn't exist!")
     
     # Get the medication factor
     # BUG: Adding 's' to medication name, which doesn't match DOSAGE_FACTORS keys
-    factor = DOSAGE_FACTORS.get(medication + 's', 0)
+    # FIX: Not adding "s"
+    factor = DOSAGE_FACTORS.get(medication, 0)
     
     # Calculate base dosage
     # BUG: Using addition instead of multiplication
