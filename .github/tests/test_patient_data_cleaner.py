@@ -9,7 +9,8 @@ and filters out patients under 18.
 Usage:
     pytest test_patient_data_cleaner.py
 """
-
+import sys
+sys.path.append('/workspaces/datasci-223-assignment-2-ZhangZwaa')
 import os
 import json
 import pytest

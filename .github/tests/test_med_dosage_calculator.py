@@ -10,7 +10,7 @@ Usage:
     pytest test_med_dosage_calculator.py
 """
 import sys
-sys.path.append('/workspaces/datasci-223-assignment-2-ZhangZwaa')  # Add the folder to the Python path
+sys.path.append('/workspaces/datasci-223-assignment-2-ZhangZwaa')
 import os
 import json
 import pytest
