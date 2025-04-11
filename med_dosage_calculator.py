@@ -211,7 +211,7 @@ def calculate_all_dosages(patients):
         else:
             total_medication += None
             print("final_dosage doesn't exist!")
-    
+
     return patients_with_dosages, total_medication
 
 def main():

@@ -9,7 +9,8 @@ and correctly sums the total medication needed.
 Usage:
     pytest test_med_dosage_calculator.py
 """
-
+import sys
+sys.path.append('/workspaces/datasci-223-assignment-2-ZhangZwaa')  # Add the folder to the Python path
 import os
 import json
 import pytest
@@ -21,19 +22,19 @@ TEST_DATA = [
     {
         "name": "john smith",
         "weight": 80.0,
-        "med": "lisinopril",
+        "medication": "lisinopril",
         "frequency": "daily"
     },
     {
         "name": "sarah johnson",
         "weight": 60.0,
-        "med": "oseltamivir",
+        "medication": "oseltamivir",
         "frequency": "twice daily"
     },
     {
         "name": "robert williams",
         "weight": 90.0,
-        "med": "metformin",
+        "medication": "metformin",
         "frequency": "daily"
     }
 ]
@@ -57,12 +58,12 @@ def test_load_patient_data(sample_data_file):
     assert len(patients) == 3
     assert patients[0]["name"] == "john smith"
     assert patients[0]["weight"] == 80.0
-    assert patients[0]["med"] == "lisinopril"
+    assert patients[0]["medication"] == "lisinopril"
 
 def test_calculate_dosage():
     """Test that dosage is calculated correctly for a single patient."""
     patient = TEST_DATA[0]  # John Smith, 80kg, lisinopril
-    dosage = calculate_dosage(patient)
+    dosage = calculate_dosage(patient)["final_dosage"]
     
     # lisinopril factor is 0.5 mg/kg, so 80kg * 0.5 = 40mg
     expected_dosage = 80.0 * 0.5
@@ -70,7 +71,7 @@ def test_calculate_dosage():
     
     # Test another patient
     patient = TEST_DATA[1]  # Sarah Johnson, 60kg, oseltamivir
-    dosage = calculate_dosage(patient)
+    dosage = calculate_dosage(patient)["final_dosage"]
     
     # oseltamivir factor is 2.5 mg/kg, so 60kg * 2.5 = 150mg
     expected_dosage = 60.0 * 2.5
@@ -84,9 +85,9 @@ def test_calculate_all_dosages():
     assert len(patients_with_dosages) == 3
     
     # Check individual dosages
-    assert patients_with_dosages[0]["dosage"] == 80.0 * 0.5  # John: 80kg * 0.5 = 40mg
-    assert patients_with_dosages[1]["dosage"] == 60.0 * 2.5  # Sarah: 60kg * 2.5 = 150mg
-    assert patients_with_dosages[2]["dosage"] == 90.0 * 10.0  # Robert: 90kg * 10.0 = 900mg
+    assert patients_with_dosages[0]["final_dosage"] == 80.0 * 0.5  # John: 80kg * 0.5 = 40mg
+    assert patients_with_dosages[1]["final_dosage"] == 60.0 * 2.5  # Sarah: 60kg * 2.5 = 150mg
+    assert patients_with_dosages[2]["final_dosage"] == 90.0 * 10.0  # Robert: 90kg * 10.0 = 900mg
     
     # Check total medication
     expected_total = (80.0 * 0.5) + (60.0 * 2.5) + (90.0 * 10.0)  # 40 + 150 + 900 = 1090mg
