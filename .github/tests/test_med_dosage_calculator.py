@@ -6,7 +6,8 @@ This script tests that:
 1. The medication dosage calculator runs without errors
 2. The original buggy lines have been fixed
 """
-
+import sys
+sys.path.append('/workspaces/datasci-223-assignment-2-ZhangZwaa')
 import os
 import pytest
 import subprocess
