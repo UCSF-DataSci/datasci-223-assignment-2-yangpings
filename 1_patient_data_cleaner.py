@@ -40,20 +40,30 @@ Usage:
 
 import json
 import os
+import pdb
+import pandas as pd
+import sys
+
 
 def load_patient_data(filepath):
     """
     Load patient data from a JSON file.
-    
+
     Args:
         filepath (str): Path to the JSON file
-        
+
     Returns:
         list: List of patient dictionaries
     """
     # BUG: No error handling for file not found
-    with open(filepath, 'r') as file:
-        return json.load(file)
+    # FIX: add an error
+    try:
+        with open(filepath, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        print("File not found!")
+        sys.exit(1)
+
 
 def clean_patient_data(patients):
     """
@@ -62,59 +72,70 @@ def clean_patient_data(patients):
     - Converting ages to integers
     - Filtering out patients under 18
     - Removing duplicates
-    
+
     Args:
         patients (list): List of patient dictionaries
-        
+
     Returns:
         list: Cleaned list of patient dictionaries
     """
     cleaned_patients = []
-    
+    seen = set()
+
     for patient in patients:
         # BUG: Typo in key 'nage' instead of 'name'
-        patient['nage'] = patient['name'].title()
-        
+        # FIX: Correct the name
+        patient['name'] = patient['name'].title()
+
         # BUG: Wrong method name (fill_na vs fillna)
-        patient['age'] = patient['age'].fill_na(0)
-        
+        # FIX: Using int to convert ages to integers
+        patient['age'] = int(patient.get('age', 0))
+
         # BUG: Wrong method name (drop_duplcates vs drop_duplicates)
-        patient = patient.drop_duplcates()
-        
+        # FIX: Drop duplicates at the end of this function
+
         # BUG: Wrong comparison operator (= vs ==)
-        if patient['age'] = 18:
+        # FIX: Change to >= to correctly fliter patients under 18 out
+        if patient['age'] >= 18:
             # BUG: Logic error - keeps patients under 18 instead of filtering them out
-            cleaned_patients.append(patient)
-    
+            patient_tuple = tuple(sorted(patient.items()))
+            # FIX: Duplicates should be removed here
+            if patient_tuple not in seen:
+                seen.add(patient_tuple)
+                cleaned_patients.append(patient)
+
     # BUG: Missing return statement for empty list
     if not cleaned_patients:
-        return None
-    
+        print("The list is empty!")
+        return []
+
     return cleaned_patients
+
 
 def main():
     """Main function to run the script."""
     # Get the directory of the current script
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    
+
     # Construct the path to the data file
     data_path = os.path.join(script_dir, 'data', 'raw', 'patients.json')
-    
+
     # BUG: No error handling for load_patient_data failure
     patients = load_patient_data(data_path)
-    
+
     # Clean the patient data
     cleaned_patients = clean_patient_data(patients)
-    
+    print(f"Type: {type(cleaned_patients)}")
     # BUG: No check if cleaned_patients is None
     # Print the cleaned patient data
     print("Cleaned Patient Data:")
     for patient in cleaned_patients:
         # BUG: Using 'name' key but we changed it to 'nage'
-        print(f"Name: {patient['name']}, Age: {patient['age']}, Diagnosis: {patient['diagnosis']}")
-    
+        print(f"Name:  {patient['name']}, Age: {patient['age']}, Diagnosis: {patient['diagnosis']}")
+
     # Return the cleaned data (useful for testing)
     return cleaned_patients
+
 
 if __name__ == "__main__":
     main()
