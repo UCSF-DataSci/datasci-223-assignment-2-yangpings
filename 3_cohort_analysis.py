@@ -56,7 +56,7 @@ def main():
 
     try:
         results = analyze_patient_cohorts(input_file)
-        print("\nCohort Analysis Summary:")
+        print("\nCohort Analysis Results:")
         print(results)
     except FileNotFoundError as e:
         print(e)
